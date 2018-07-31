@@ -111,6 +111,8 @@
                 }
             ],
             "post-install": [
+		"2to3-3.7 -w /app/bin/steamdeps",
+		"sed -i '1s/python/python3/' /app/bin/steamdeps",
                 "cp /app/share/applications/steam.desktop /app/share/applications/com.valvesoftware.Steam.desktop",
                 "install -m755 steam-wrapper /app/bin",
                 "cp /usr/bin/cmp /app/bin",
