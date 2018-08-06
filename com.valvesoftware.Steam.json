@@ -23,7 +23,7 @@
         "--persist=.",
         "--extension=org.freedesktop.Platform.Compat.i386=directory=lib/i386-linux-gnu",
         "--extension=org.freedesktop.Platform.Compat.i386=version=unstable",
-        "--extension=org.freedesktop.Platform.Compat.i386.Debug=directory=lib/i386-linux-gnu/debug",
+        "--extension=org.freedesktop.Platform.Compat.i386.Debug=directory=lib/debug/lib/i386-linux-gnu",
         "--extension=org.freedesktop.Platform.Compat.i386.Debug=version=unstable",
         "--extension=org.freedesktop.Platform.Compat.i386.Debug=no-autodownload=true",
         "--extension=org.freedesktop.Platform.GL32=directory=lib/i386-linux-gnu/GL",
@@ -117,6 +117,7 @@
                 "install -m755 steam-wrapper /app/bin",
                 "cp /usr/bin/cmp /app/bin",
                 "mkdir -p /app/lib/i386-linux-gnu",
+                "mkdir -p /app/lib/debug/lib/i386-linux-gnu",
                 "mkdir -p /app/share/appdata",
                 "cp com.valvesoftware.Steam.appdata.xml /app/share/appdata",
                 "install -Dm644 ld.so.conf /app/etc/ld.so.conf"
