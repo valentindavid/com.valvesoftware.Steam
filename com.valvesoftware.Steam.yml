@@ -1,6 +1,6 @@
 app-id: com.valvesoftware.Steam
 runtime: org.freedesktop.Platform
-runtime-version: '18.08'
+runtime-version: '19.08'
 sdk: org.freedesktop.Sdk
 command: steam-wrapper
 separate-locales: false
@@ -39,22 +39,25 @@ finish-args:
   - --env=SDL_VIDEODRIVER=
   - --env=DBUS_FATAL_WARNINGS=0
   - --env=SSL_CERT_DIR=/etc/ssl/certs
+  # steam web interface uses its own version of glib, but it still
+  # tries to load gio modules which are incompatible.
+  - --env=GIO_MODULE_DIR=/nonexistent
   - --require-version=0.9.0
 
 add-extensions:
   org.freedesktop.Platform.Compat.i386:
     directory: lib/i386-linux-gnu
-    version: '18.08'
+    version: '19.08'
 
   org.freedesktop.Platform.Compat.i386.Debug:
     directory: lib/debug/lib/i386-linux-gnu
-    version: '18.08'
+    version: '19.08'
     no-autodownload: true
 
   org.freedesktop.Platform.GL32:
     directory: lib/i386-linux-gnu/GL
     version: '1.4'
-    versions: 18.08;1.4
+    versions: 19.08;1.4
     subdirectories: true
     no-autodownload: true
     autodelete: false
@@ -62,6 +65,9 @@ add-extensions:
     merge-dirs: vulkan/icd.d;glvnd/egl_vendor.d
     download-if: active-gl-driver
     enable-if: active-gl-driver
+
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.toolchain-i386
 
 cleanup:
   - /lib/*.a
@@ -78,6 +84,37 @@ cleanup-commands:
   - python3 -m compileall --invalidation-mode=unchecked-hash /app
 
 modules:
+  - name: shared-library-guard
+    buildsystem: meson
+    build-options:
+      libdir: /app/lib/shared-library-guard/x86_64-linux-gnu
+    config-opts:
+      - -Dshared_library_guard_config=/app/etc/freedesktop.ld.so.blockedlist
+    sources:
+      - type: git
+        url: https://gitlab.com/freedesktop-sdk/shared-library-guard.git
+        commit: v19.04.1-0-gd0d7c745be1ba5462ff1bbe4695fb4bad480ac8d
+
+  - name: shared-library-guard-i686
+    buildsystem: meson
+    build-options:
+      libdir: /app/lib/shared-library-guard/i386-linux-gnu
+      env:
+        CC: /usr/lib/sdk/toolchain-i386/bin/i686-unknown-linux-gnu-gcc
+        # -march=x86-64 is defined by Freedesktop SDK, we override cflags
+        CFLAGS: >-
+          -O2 -g -pipe
+          -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS
+          -fexceptions -fstack-protector-strong
+          -grecord-gcc-switches -fasynchronous-unwind-tables
+          -fstack-clash-protection -fcf-protection
+    config-opts:
+      - -Dshared_library_guard_config=/app/etc/freedesktop.ld.so.blockedlist
+    sources:
+      - type: git
+        url: https://gitlab.com/freedesktop-sdk/shared-library-guard.git
+        commit: v19.04.1-0-gd0d7c745be1ba5462ff1bbe4695fb4bad480ac8d
+
   - name: libnotify
     config-opts:
       - --disable-static
