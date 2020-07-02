@@ -83,9 +83,10 @@ modules:
      arch:
        x86_64: *compat_i386_opts
     sources:
-      - sources/vkd3d-archive.json
-      - type: patch
-        path: patches/0001-vkd3d-Introduce-our-own-pipeline-bind-point-enumerat.patch
+      - type: git
+        url: https://source.winehq.org/git/vkd3d.git
+        commit: 24eaeb2cdf2a7df998673792a5d092bf0062468c
+        disable-shallow-clone: true
 
 # -- end vkd3d --
 

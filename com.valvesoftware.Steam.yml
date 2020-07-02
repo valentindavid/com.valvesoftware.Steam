@@ -110,6 +110,71 @@ cleanup-commands:
   - python3 -m compileall --invalidation-mode=unchecked-hash /app
 
 modules:
+  - name: widl
+    buildsystem: simple
+    build-commands:
+      - |
+        ./configure --prefix=/app \
+                    --host=x86_64-unknown-linux-gnu \
+                    --build=x86_64-unknown-linux-gnu \
+                    --disable-win16 \
+                    --enable-win64 \
+                    --disable-tests \
+                    --without-alsa \
+                    --without-capi \
+                    --without-cms \
+                    --without-coreaudio \
+                    --without-cups \
+                    --without-dbus \
+                    --without-faudio \
+                    --without-fontconfig \
+                    --without-freetype \
+                    --without-gphoto \
+                    --without-glu \
+                    --without-gsm \
+                    --without-gssapi \
+                    --without-gstreamer \
+                    --without-hal \
+                    --without-inotify \
+                    --without-jpeg \
+                    --without-krb5 \
+                    --without-ldap \
+                    --without-mpg123 \
+                    --without-netapi \
+                    --without-openal \
+                    --without-osmesa \
+                    --without-oss \
+                    --without-pcap \
+                    --without-png \
+                    --without-pulse \
+                    --without-sane \
+                    --without-sdl \
+                    --without-tiff \
+                    --without-udev \
+                    --without-usb \
+                    --without-v4l2 \
+                    --without-vkd3d \
+                    --without-vulkan \
+                    --without-xcomposite \
+                    --without-xcursor \
+                    --without-xfixes \
+                    --without-xinerama \
+                    --without-xinput \
+                    --without-xinput2 \
+                    --without-xrandr \
+                    --without-xrender \
+                    --without-xshape \
+                    --without-xshm \
+                    --without-xxf86vm
+
+      - make -C libs/port
+      - make -C libs/wpp
+      - make -C tools/widl
+      - make -C tools/widl install
+    sources:
+      - type: archive
+        url: https://dl.winehq.org/wine/source/5.x/wine-5.11.tar.xz
+        sha256: b3db23ce259ee07bf036d57021a9bedf6313064c38677ce7c0cc58db13821ae0
 
   - modules.yml
 
